@@ -18,11 +18,12 @@
 
 using namespace std;
 
-void initialize(string filename, EventList * events){
+void initialize(string filename, EventList * events, vector<IO *> * allIOs){
 	ifstream f;
 	f.open(filename);
 
 	if(f.is_open()){
+		int IO_ID = 0;
 		string instruction;
 		//Each line in the file is an instruction
 		while(getline(f, instruction)){
@@ -35,7 +36,11 @@ void initialize(string filename, EventList * events){
 				int timeStamp, trackNum = 0;
 				iss >> timeStamp >> trackNum;
 
-				//toDo create add event for each track
+				IO newIO = new IO(IO_ID, trackNum);
+				Event newEvent = new Event(timeStamp, ADD, newIO);
+				allIOs->push_back(newIO);
+
+				IO_ID++;
 			}
 		}
 	} else {
@@ -43,6 +48,20 @@ void initialize(string filename, EventList * events){
 		exit(1);
 	}
 	f.close();
+}
+
+int simulate(EventList * events, Scheduler * scheduler, vector<IO *> * allIOs, bool	verbose){
+	int curTime = 0;
+	int curTrack = 0;
+	int lastEventFinish = 0;
+
+	while((curEvent = events->getEvent())){
+		curTime = curEvent->getTimestamp();
+		
+		delete curEvent; //free memory
+	}
+
+	return lastEventFinish;
 }
 
 int main(int argc, char **argv){
@@ -68,12 +87,11 @@ int main(int argc, char **argv){
 
 	string filename = argv[optind];
 	
-	int total_time = 0;
-	int curTrack = 0;
 	EventList * events = new EventList();
 	vector<IO *> * allIOs = new vector<IO *>();
 
-	initialize(filename, events);
+	initialize(filename, events, allIOs);
+	int total_time = simulate(events, scheduler, allIOs, verbose);
 
 	return 0;
 }
