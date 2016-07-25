@@ -9,10 +9,10 @@
 
 class Scheduler {
 	public:
-		Scheduler()
+		Scheduler(){}
 
-		virtual IO * getNextIO(){} =0;
-		virtual void putIO(IO * io){} =0;
+		virtual IO * getNextIO() =0;
+		virtual void putIO(IO * io) =0;
 };
 
 /**********************************************************
@@ -35,68 +35,68 @@ class FIFO_Scheduler : public Scheduler {
 		}
 };
 
-//Shortest Seek Time First
-class SSTF_Scheduler : public Scheduler {
-	public:
-		SSTF_Scheduler(){}
+// // Shortest Seek Time First
+// class SSTF_Scheduler : public Scheduler {
+// 	public:
+// 		SSTF_Scheduler(){}
 
-		IO * getNextIO(){
-			IO * returnIO;
+// 		IO * getNextIO(){
+// 			IO * returnIO;
 
-			return returnIO;
-		}
+// 			return returnIO;
+// 		}
 
-		void putIO(IO * io){
+// 		void putIO(IO * io){
 
-		}
-};
+// 		}
+// };
 
-//Scan -- really look
-class Scan_Scheduler : public Scheduler {
-	public:
-		Scan_Scheduler(){}
+// //Scan -- really look
+// class Scan_Scheduler : public Scheduler {
+// 	public:
+// 		Scan_Scheduler(){}
 
-		IO * getNextIO(){
-			IO * returnIO;
+// 		IO * getNextIO(){
+// 			IO * returnIO;
 
-			return returnIO;
-		}
+// 			return returnIO;
+// 		}
 
-		void putIO(IO * io){
+// 		void putIO(IO * io){
 
-		}
-};
+// 		}
+// };
 
-//cscan -- really clook
-class cScan_Scheduler : public Scheduler {
-	public:
-		cScan_Scheduler(){}
+// //cscan -- really clook
+// class cScan_Scheduler : public Scheduler {
+// 	public:
+// 		cScan_Scheduler(){}
 
-		IO * getNextIO(){
-			IO * returnIO;
+// 		IO * getNextIO(){
+// 			IO * returnIO;
 
-			return returnIO;
-		}
+// 			return returnIO;
+// 		}
 
-		void putIO(IO * io){
+// 		void putIO(IO * io){
 
-		}
-};
+// 		}
+// };
 
-//fscan -- really flook
-class fScan_Scheduler : public Scheduler {
-	public:
-		fScan_Scheduler(){}
+// //fscan -- really flook
+// class fScan_Scheduler : public Scheduler {
+// 	public:
+// 		fScan_Scheduler(){}
 
-		IO * getNextIO(){
-			IO * returnIO;
+// 		IO * getNextIO(){
+// 			IO * returnIO;
 
-			return returnIO;
-		}
+// 			return returnIO;
+// 		}
 
-		void putIO(IO * io){
+// 		void putIO(IO * io){
 
-		}
-};
+// 		}
+// };
 
 #endif

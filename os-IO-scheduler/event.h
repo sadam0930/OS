@@ -1,6 +1,7 @@
 #ifndef event_header
 #define event_header
 
+#include <string>
 #include "io.h"
 
 #ifndef nullptr
@@ -31,6 +32,24 @@ class Event {
 		void setOperation(operation op){ this->op = op; }
 		int getTimestamp(){ return this->timestamp; }
 		operation getOperation(){ return this->op; }
+
+		std::string opToString(){
+			std::string returnString = "";
+
+			switch(this->op){
+				case ADD:
+					returnString = "add";
+					break;
+				case ISSUE:
+					returnString = "issue";
+					break;
+				case FINISH:
+					returnString = "finish";
+					break;
+			}
+
+			return returnString;
+		}
 };
 
 class EventList {

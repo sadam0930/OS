@@ -8,13 +8,19 @@
 class IO {
 	public:
 		int IO_ID, trackNum;
+		int timeInPreviousState;
+		int stateTimeStamp;
+		int AT; 
 		//Each IO is a node in a linked list
 		IO * nextIO;
 		IO * prevIO;
 
-		IO(int IO_ID, int trackNum){
+		IO(int IO_ID, int trackNum, int arrivalTime){
 			this-> IO_ID = IO_ID;
 			this->trackNum = trackNum;
+			this->timeInPreviousState = 0;
+			this->stateTimeStamp = arrivalTime;
+			this->AT = arrivalTime;
 		}
 
 };
