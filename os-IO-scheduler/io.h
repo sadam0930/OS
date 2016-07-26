@@ -5,12 +5,20 @@
 #define nullptr __null
 #endif
 
+typedef enum IOState {
+	CREATED,
+	READY,
+	ISSUED,
+	DONE
+} IOState;
+
 class IO {
 	public:
 		int IO_ID, trackNum;
+		IOState currentState;
 		int timeInPreviousState;
 		int stateTimeStamp;
-		int AT; 
+		int AT, TT; //arrival time, total time
 		//Each IO is a node in a linked list
 		IO * nextIO;
 		IO * prevIO;
@@ -19,8 +27,10 @@ class IO {
 			this-> IO_ID = IO_ID;
 			this->trackNum = trackNum;
 			this->timeInPreviousState = 0;
+			this->currentState = CREATED;
 			this->stateTimeStamp = arrivalTime;
 			this->AT = arrivalTime;
+			this->TT = 0;
 		}
 
 };

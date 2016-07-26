@@ -74,7 +74,7 @@ class EventList {
 		}
 
 		//sorted insert
-		void putEvent(int timestamp, operation op, IO * io){
+		void putEvent(int timestamp, IO * io, operation op){
 			Event * newEvent = new Event(timestamp, op, io);
 			Event * cur;
 

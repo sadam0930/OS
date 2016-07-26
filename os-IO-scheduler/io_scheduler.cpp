@@ -18,6 +18,10 @@
 
 using namespace std;
 
+//global
+int total_time = 0;
+int tot_movement = 0;
+
 void initialize(string filename, EventList * events, vector<IO *> * allIOs){
 	ifstream f;
 	f.open(filename);
@@ -37,7 +41,7 @@ void initialize(string filename, EventList * events, vector<IO *> * allIOs){
 				iss >> timeStamp >> trackNum;
 
 				IO * newIO = new IO(IO_ID, trackNum, timeStamp);
-				events->putEvent(timeStamp, ADD, newIO);
+				events->putEvent(timeStamp, newIO, ADD);
 				allIOs->push_back(newIO);
 
 				IO_ID++;
@@ -50,10 +54,30 @@ void initialize(string filename, EventList * events, vector<IO *> * allIOs){
 	f.close();
 }
 
-int simulate(EventList * events, Scheduler * scheduler, vector<IO *> * allIOs, bool	verbose){
-	int curTime = 1;
+void printVerbose(int curTime, int curTrack, Event * curEvent){
+	cout << curTime << setfill(' ') << setw(6) << curEvent->io->IO_ID << " ";
+	cout << curEvent->opToString();
+	if(curEvent->getOperation() != FINISH){
+		cout << " " << curEvent->io->trackNum;
+	} else {
+		cout << " " << curEvent->io->TT;
+	}
+	if(curEvent->getOperation() == ISSUE){
+		cout << " " << curTrack;
+	}
+	cout << endl;
+}
+
+typedef enum Direction {
+	UP,
+	DOWN
+} Direction;
+
+void simulate(EventList * events, Scheduler * scheduler, vector<IO *> * allIOs, bool	verbose){
+	int curTime = 0;
 	int curTrack = 0;
-	int lastEventFinish = 0;
+	Direction direction = UP;
+
 	Event * curEvent;
 	bool callScheduler = false;
 	IO * curRunningIO = nullptr;
@@ -64,19 +88,33 @@ int simulate(EventList * events, Scheduler * scheduler, vector<IO *> * allIOs, b
 
 		switch(curEvent->getOperation()){
 			case ADD:
-
+				scheduler->putIO(curEvent->io);
+				curEvent->io->currentState = READY;
+				curEvent->io->stateTimeStamp = curTime;
 				callScheduler = true;
 				break;
 			case ISSUE:
-
+				if(curEvent->io->trackNum > curTrack) {
+					direction = UP;
+					events->putEvent((curTime + curEvent->io->trackNum - curTrack), curEvent->io, FINISH);
+				} else {
+					direction = DOWN;
+					events->putEvent((curTime + curTrack - curEvent->io->trackNum), curEvent->io, FINISH);
+				}
+				curEvent->io->currentState = ISSUED;
+				curEvent->io->stateTimeStamp = curTime;
 				break;
 			case FINISH:
-
+				curTrack = curEvent->io->trackNum;
+				curEvent->io->TT = (curTime - curEvent->io->AT);
+				//free current running IO
+				curRunningIO = nullptr;
 				callScheduler = true;
+				total_time = curTime; //overwrite until it's over
 				break;
 		}
 
-		if(verbose){ cout << curTime << setfill(' ') << setw(6) << curEvent->io->IO_ID << " " << curEvent->opToString() << " " << curEvent->io->trackNum << endl; }
+		if(verbose){ printVerbose(curTime, curTrack, curEvent); }
 
 		delete curEvent; //free memory
 
@@ -85,16 +123,28 @@ int simulate(EventList * events, Scheduler * scheduler, vector<IO *> * allIOs, b
 			if(events->getNextTimestamp() == curTime){
 				continue;
 			} else {
-				//toDo: get next IO and run it
+				callScheduler = false;
+				if(curRunningIO == nullptr){
+					curRunningIO = scheduler->getNextIO();
+					if(curRunningIO){
+						events->putEvent(curTime, curRunningIO, ISSUE);
+					} //may need else if for one of the schedulers
+				}
 			}
 		}
 	}
-
-	return lastEventFinish;
 }
 
-void print_sum(vector<IO *> * allIOs, int total_time){
-
+void print_sum(vector<IO *> * allIOs, int total_time, int tot_movement){
+	double avg_turnaround, avg_waittime;
+	int max_waittime;
+	avg_turnaround = avg_waittime = max_waittime = 0;
+	printf("SUM: %d %d %.2lf %.2lf %d\n",
+			total_time,
+			tot_movement,
+			avg_turnaround,
+			avg_waittime,
+			max_waittime); 
 }
 
 int main(int argc, char **argv){
@@ -123,8 +173,8 @@ int main(int argc, char **argv){
 	EventList * events = new EventList();
 	vector<IO *> * allIOs = new vector<IO *>();
 	initialize(filename, events, allIOs);
-	int total_time = simulate(events, scheduler, allIOs, verbose);
-	print_sum(allIOs, total_time);
+	simulate(events, scheduler, allIOs, verbose);
+	print_sum(allIOs, total_time, tot_movement);
 
 	return 0;
 }

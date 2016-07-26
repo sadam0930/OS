@@ -9,14 +9,17 @@
 
 class Scheduler {
 	public:
-		Scheduler(){}
-
+		IOList * runQueue;
+		Scheduler(){
+			this->runQueue = new IOList();
+		}
+		//implementation will differ based on the scheduling algorithm
 		virtual IO * getNextIO() =0;
 		virtual void putIO(IO * io) =0;
 };
 
 /**********************************************************
-differentiate how to getProcess between scheduler algorithms
+differentiate how to getIO between scheduler algorithms
 ***********************************************************/
 
 //First In First Out
@@ -24,14 +27,30 @@ class FIFO_Scheduler : public Scheduler {
 	public:
 		FIFO_Scheduler(){}
 
+		//get IO from front of run queue
 		IO * getNextIO(){
 			IO * returnIO;
-
+			if(runQueue->numIOs == 0){
+				returnIO = nullptr;
+			} else {
+				returnIO = runQueue->head;
+				runQueue->head = runQueue->head->nextIO;
+				(runQueue->numIOs)--;
+			}
 			return returnIO;
 		}
 
+		//add IO at end of run queue
 		void putIO(IO * io){
-
+			if(runQueue->isEmpty()){
+				runQueue->head = io;
+				runQueue->tail = runQueue->head;
+			} else {
+				io->prevIO = runQueue->tail;
+				runQueue->tail->nextIO = io;
+				runQueue->tail = io;
+			}
+			(runQueue->numIOs)++;
 		}
 };
 
