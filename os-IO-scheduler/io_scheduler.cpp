@@ -89,11 +89,12 @@ void simulate(EventList * events, Scheduler * scheduler, vector<IO *> * allIOs, 
 		switch(curEvent->getOperation()){
 			case ADD:
 				scheduler->putIO(curEvent->io);
-				curEvent->io->currentState = READY;
-				curEvent->io->stateTimeStamp = curTime;
+				// curEvent->io->currentState = READY;
+				// curEvent->io->stateTimeStamp = curTime;
 				callScheduler = true;
 				break;
 			case ISSUE:
+				curEvent->io->WT = curTime - curEvent->io->AT;
 				if(curEvent->io->trackNum > curTrack) {
 					direction = UP;
 					events->putEvent((curTime + curEvent->io->trackNum - curTrack), curEvent->io, FINISH);
@@ -101,10 +102,16 @@ void simulate(EventList * events, Scheduler * scheduler, vector<IO *> * allIOs, 
 					direction = DOWN;
 					events->putEvent((curTime + curTrack - curEvent->io->trackNum), curEvent->io, FINISH);
 				}
-				curEvent->io->currentState = ISSUED;
-				curEvent->io->stateTimeStamp = curTime;
+				// curEvent->io->currentState = ISSUED;
+				// curEvent->io->stateTimeStamp = curTime;
 				break;
 			case FINISH:
+				//tally total number of tracks the head had to be moved
+				if(direction == UP){
+					tot_movement += curEvent->io->trackNum - curTrack;
+				} else {
+					tot_movement += curTrack - curEvent->io->trackNum;
+				}
 				curTrack = curEvent->io->trackNum;
 				curEvent->io->TT = (curTime - curEvent->io->AT);
 				//free current running IO
@@ -139,6 +146,20 @@ void print_sum(vector<IO *> * allIOs, int total_time, int tot_movement){
 	double avg_turnaround, avg_waittime;
 	int max_waittime;
 	avg_turnaround = avg_waittime = max_waittime = 0;
+
+	unsigned long numIOs = allIOs->size();
+	for (unsigned int i=0; i < numIOs; i++) {
+		avg_turnaround += allIOs->at(i)->TT;
+		avg_waittime += allIOs->at(i)->WT;
+		
+		if(allIOs->at(i)->WT > max_waittime){
+			max_waittime = allIOs->at(i)->WT;
+		}
+	}
+
+	avg_turnaround = (double)avg_turnaround/(double)numIOs;
+	avg_waittime = (double)avg_waittime/(double)numIOs;
+
 	printf("SUM: %d %d %.2lf %.2lf %d\n",
 			total_time,
 			tot_movement,

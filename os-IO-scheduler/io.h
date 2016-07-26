@@ -18,7 +18,7 @@ class IO {
 		IOState currentState;
 		int timeInPreviousState;
 		int stateTimeStamp;
-		int AT, TT; //arrival time, total time
+		int AT, TT, WT; //arrival time, turnaround time, wait time
 		//Each IO is a node in a linked list
 		IO * nextIO;
 		IO * prevIO;
