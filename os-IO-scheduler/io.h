@@ -24,6 +24,8 @@ class IO {
 		IO * prevIO;
 
 		IO(int IO_ID, int trackNum, int arrivalTime){
+			this->prevIO = nullptr;
+			this->nextIO = nullptr;
 			this-> IO_ID = IO_ID;
 			this->trackNum = trackNum;
 			this->timeInPreviousState = 0;

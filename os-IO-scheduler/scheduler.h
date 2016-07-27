@@ -1,6 +1,7 @@
 #ifndef scheduler_header
 #define scheduler_header
 
+#include <climits>
 #include "io.h"
 
 #ifndef nullptr
@@ -14,7 +15,7 @@ class Scheduler {
 			this->runQueue = new IOList();
 		}
 		//implementation will differ based on the scheduling algorithm
-		virtual IO * getNextIO() =0;
+		virtual IO * getNextIO(int curTrack) =0;
 		virtual void putIO(IO * io) =0;
 };
 
@@ -28,7 +29,7 @@ class FIFO_Scheduler : public Scheduler {
 		FIFO_Scheduler(){}
 
 		//get IO from front of run queue
-		IO * getNextIO(){
+		IO * getNextIO(int curTrack){
 			IO * returnIO;
 			if(runQueue->numIOs == 0){
 				returnIO = nullptr;
@@ -54,28 +55,54 @@ class FIFO_Scheduler : public Scheduler {
 		}
 };
 
-// // Shortest Seek Time First
-// class SSTF_Scheduler : public Scheduler {
-// 	public:
-// 		SSTF_Scheduler(){}
+// Shortest Seek Time First
+class SSTF_Scheduler : public Scheduler {
+	public:
+		SSTF_Scheduler(){}
 
-// 		IO * getNextIO(){
-// 			IO * returnIO;
+		IO * getNextIO(int curTrack){
+			IO * returnIO;
 
-// 			return returnIO;
-// 		}
+			if(runQueue->isEmpty()){
+				returnIO = nullptr;
+			} else {
+				IO * next = runQueue->head;
+				int min, diff;
+				min = 9999;
 
-// 		void putIO(IO * io){
+				do {
+					diff = abs(next->trackNum - curTrack);
+					if(diff < min){
+						min = diff;
+						returnIO = next;
+					}
+					next = next->nextIO;
+				} while(next);
+			}
 
-// 		}
-// };
+			return returnIO;
+		}
+
+		//add IO at end of run queue
+		void putIO(IO * io){
+			if(runQueue->isEmpty()){
+				runQueue->head = io;
+				runQueue->tail = runQueue->head;
+			} else {
+				io->prevIO = runQueue->tail;
+				runQueue->tail->nextIO = io;
+				runQueue->tail = io;
+			}
+			(runQueue->numIOs)++;
+		}
+};
 
 // //Scan -- really look
 // class Scan_Scheduler : public Scheduler {
 // 	public:
 // 		Scan_Scheduler(){}
 
-// 		IO * getNextIO(){
+// 		IO * getNextIO(int curTrack){
 // 			IO * returnIO;
 
 // 			return returnIO;
@@ -91,7 +118,7 @@ class FIFO_Scheduler : public Scheduler {
 // 	public:
 // 		cScan_Scheduler(){}
 
-// 		IO * getNextIO(){
+// 		IO * getNextIO(int curTrack){
 // 			IO * returnIO;
 
 // 			return returnIO;
@@ -107,7 +134,7 @@ class FIFO_Scheduler : public Scheduler {
 // 	public:
 // 		fScan_Scheduler(){}
 
-// 		IO * getNextIO(){
+// 		IO * getNextIO(int curTrack){
 // 			IO * returnIO;
 
 // 			return returnIO;

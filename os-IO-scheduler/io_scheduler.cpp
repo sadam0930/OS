@@ -132,7 +132,7 @@ void simulate(EventList * events, Scheduler * scheduler, vector<IO *> * allIOs, 
 			} else {
 				callScheduler = false;
 				if(curRunningIO == nullptr){
-					curRunningIO = scheduler->getNextIO();
+					curRunningIO = scheduler->getNextIO(curTrack);
 					if(curRunningIO){
 						events->putEvent(curTime, curRunningIO, ISSUE);
 					} //may need else if for one of the schedulers
@@ -151,7 +151,7 @@ void print_sum(vector<IO *> * allIOs, int total_time, int tot_movement){
 	for (unsigned int i=0; i < numIOs; i++) {
 		avg_turnaround += allIOs->at(i)->TT;
 		avg_waittime += allIOs->at(i)->WT;
-		
+
 		if(allIOs->at(i)->WT > max_waittime){
 			max_waittime = allIOs->at(i)->WT;
 		}
@@ -176,7 +176,7 @@ int main(int argc, char **argv){
 	while ((opt = getopt (argc, argv, "vs:")) != -1) {
 		if (opt == 's') {
 			if(optarg[0] == 'i'){ scheduler = new FIFO_Scheduler(); } 
-			// else if(optarg[0] == 'j'){ scheduler = new SSTF_Scheduler(); }
+			else if(optarg[0] == 'j'){ scheduler = new SSTF_Scheduler(); }
 			// else if(optarg[0] == 's'){ scheduler = new Scan_Scheduler(); }
 			// else if(optarg[0] == 'c'){ scheduler = new cScan_Scheduler(); }
 			// else if(optarg[0] == 'f'){ scheduler = new fScan_Scheduler(); }
