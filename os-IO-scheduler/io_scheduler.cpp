@@ -89,8 +89,6 @@ void simulate(EventList * events, Scheduler * scheduler, vector<IO *> * allIOs, 
 		switch(curEvent->getOperation()){
 			case ADD:
 				scheduler->putIO(curEvent->io);
-				// curEvent->io->currentState = READY;
-				// curEvent->io->stateTimeStamp = curTime;
 				callScheduler = true;
 				break;
 			case ISSUE:
@@ -102,8 +100,6 @@ void simulate(EventList * events, Scheduler * scheduler, vector<IO *> * allIOs, 
 					direction = DOWN;
 					events->putEvent((curTime + curTrack - curEvent->io->trackNum), curEvent->io, FINISH);
 				}
-				// curEvent->io->currentState = ISSUED;
-				// curEvent->io->stateTimeStamp = curTime;
 				break;
 			case FINISH:
 				//tally total number of tracks the head had to be moved
@@ -133,6 +129,7 @@ void simulate(EventList * events, Scheduler * scheduler, vector<IO *> * allIOs, 
 				callScheduler = false;
 				if(curRunningIO == nullptr){
 					curRunningIO = scheduler->getNextIO(curTrack);
+					// cout<< scheduler->runQueue->numIOs <<endl;
 					if(curRunningIO){
 						events->putEvent(curTime, curRunningIO, ISSUE);
 					} //may need else if for one of the schedulers
