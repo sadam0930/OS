@@ -68,11 +68,6 @@ void printVerbose(int curTime, int curTrack, Event * curEvent){
 	cout << endl;
 }
 
-typedef enum Direction {
-	UP,
-	DOWN
-} Direction;
-
 void simulate(EventList * events, Scheduler * scheduler, vector<IO *> * allIOs, bool	verbose){
 	int curTime = 0;
 	int curTrack = 0;
@@ -174,8 +169,8 @@ int main(int argc, char **argv){
 		if (opt == 's') {
 			if(optarg[0] == 'i'){ scheduler = new FIFO_Scheduler(); } 
 			else if(optarg[0] == 'j'){ scheduler = new SSTF_Scheduler(); }
-			// else if(optarg[0] == 's'){ scheduler = new Scan_Scheduler(); }
-			// else if(optarg[0] == 'c'){ scheduler = new cScan_Scheduler(); }
+			else if(optarg[0] == 's'){ scheduler = new Scan_Scheduler(); }
+			else if(optarg[0] == 'c'){ scheduler = new cScan_Scheduler(); }
 			// else if(optarg[0] == 'f'){ scheduler = new fScan_Scheduler(); }
 		} 
 		else if (opt == 'v') {
