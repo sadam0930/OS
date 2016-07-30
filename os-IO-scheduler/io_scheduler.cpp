@@ -71,7 +71,6 @@ void printVerbose(int curTime, int curTrack, Event * curEvent){
 void simulate(EventList * events, Scheduler * scheduler, vector<IO *> * allIOs, bool	verbose){
 	int curTime = 0;
 	int curTrack = 0;
-	Direction direction = UP;
 
 	Event * curEvent;
 	bool callScheduler = false;
@@ -89,16 +88,16 @@ void simulate(EventList * events, Scheduler * scheduler, vector<IO *> * allIOs, 
 			case ISSUE:
 				curEvent->io->WT = curTime - curEvent->io->AT;
 				if(curEvent->io->trackNum > curTrack) {
-					direction = UP;
+					scheduler->direction = UP;
 					events->putEvent((curTime + curEvent->io->trackNum - curTrack), curEvent->io, FINISH);
 				} else {
-					direction = DOWN;
+					scheduler->direction = DOWN;
 					events->putEvent((curTime + curTrack - curEvent->io->trackNum), curEvent->io, FINISH);
 				}
 				break;
 			case FINISH:
 				//tally total number of tracks the head had to be moved
-				if(direction == UP){
+				if(scheduler->direction == UP){
 					tot_movement += curEvent->io->trackNum - curTrack;
 				} else {
 					tot_movement += curTrack - curEvent->io->trackNum;

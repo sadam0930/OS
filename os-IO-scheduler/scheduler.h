@@ -16,10 +16,12 @@ typedef enum Direction {
 class Scheduler {
 	public:
 		std::vector<IO *> * runQueue;
+		std::vector<IO *> * otherRunQueue; //just for fScan
 		Direction direction;
 
 		Scheduler(){
 			this->runQueue = new std::vector<IO *>();
+			this->otherRunQueue = new std::vector<IO *>();
 			this->direction = UP;
 		}
 		//implementation will differ based on the scheduling algorithm
@@ -110,7 +112,57 @@ class Scan_Scheduler : public Scheduler {
 		IO * getNextIO(int curTrack){
 			IO * returnIO;
 
+			if(runQueue->empty()){
+				returnIO = nullptr;	
+			} else {
+				int idx = elevator_helper(curTrack, false, false);
+				returnIO = runQueue->at(idx);
+				runQueue->erase(runQueue->begin()+idx);
+			}
+
 			return returnIO;
+		}
+
+		int elevator_helper(int curTrack, bool runUpAlready, bool runDownAlready){
+			int rm_idx = -1;
+
+				if(direction == UP && !runUpAlready){
+					for(int i = 0; i < runQueue->size(); i++){
+						if(runQueue->at(i)->trackNum < curTrack){
+							//we are past these
+							continue;
+						} else {
+							rm_idx = i;
+							break; //it's sorted already so the first found is the closest
+						}
+					}
+					if(rm_idx == -1){
+						direction = DOWN;
+						runUpAlready = true;
+					}
+				}
+
+				if(direction == DOWN && !runDownAlready){
+					for(int i = runQueue->size()-1; i >= 0; i++){
+						if(runQueue->at(i)->trackNum > curTrack){
+							continue;
+						} else {
+							rm_idx = i;
+							break;
+						}
+					}
+
+					if(rm_idx == -1){
+						direction = UP;
+						runDownAlready = true;
+					}
+				}
+
+				if(rm_idx == -1){
+					rm_idx = elevator_helper(curTrack, runUpAlready, runDownAlready);
+				}
+
+			return rm_idx;
 		}
 };
 
@@ -159,20 +211,30 @@ class cScan_Scheduler : public Scheduler {
 		}
 };
 
-// //fscan -- really flook
-// class fScan_Scheduler : public Scheduler {
-// 	public:
-// 		fScan_Scheduler(){}
+//fscan -- really flook
+class fScan_Scheduler : public Scheduler {
+	public:
+		fScan_Scheduler(){}
 
-// 		IO * getNextIO(int curTrack){
-// 			IO * returnIO;
+		//inserted sort based on trackNum
+		void putIO(IO * io){
+			int put_idx = runQueue->size();
 
-// 			return returnIO;
-// 		}
+			for(int i = 0; i < runQueue->size(); i++){
+				if(runQueue->at(i)->trackNum > io->trackNum){
+					put_idx = i;
+					break;
+				}
+			}
 
-// 		void putIO(IO * io){
+			runQueue->insert(runQueue->begin()+put_idx, io);
+		}
 
-// 		}
-// };
+		IO * getNextIO(int curTrack){
+			IO * returnIO;
+
+			return returnIO;
+		}
+};
 
 #endif
