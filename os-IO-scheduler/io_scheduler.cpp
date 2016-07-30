@@ -87,7 +87,7 @@ void simulate(EventList * events, Scheduler * scheduler, vector<IO *> * allIOs, 
 				break;
 			case ISSUE:
 				curEvent->io->WT = curTime - curEvent->io->AT;
-				if(curEvent->io->trackNum > curTrack) {
+				if(curEvent->io->trackNum >= curTrack) {
 					scheduler->direction = UP;
 					events->putEvent((curTime + curEvent->io->trackNum - curTrack), curEvent->io, FINISH);
 				} else {
