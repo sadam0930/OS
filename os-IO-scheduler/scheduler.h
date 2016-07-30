@@ -155,8 +155,12 @@ class Scan_Scheduler : public Scheduler {
 						if(runQueue->at(i)->trackNum > curTrack){
 							continue;
 						} else {
-							rm_idx = i;
-							break;
+							if(i != 0 && runQueue->at(i-1)->trackNum == runQueue->at(i)->trackNum){
+								continue; //grab the earlier one
+							} else {
+								rm_idx = i;
+								break;
+							}
 						}
 					}
 
@@ -283,8 +287,12 @@ class fScan_Scheduler : public Scheduler {
 					if(runQueue->at(i)->trackNum > curTrack){
 						continue;
 					} else {
-						rm_idx = i;
-						break;
+						if(i != 0 && runQueue->at(i-1)->trackNum == runQueue->at(i)->trackNum){
+							continue; //grab the earlier one
+						} else {
+							rm_idx = i;
+							break;
+						}
 					}
 				}
 
