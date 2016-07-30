@@ -123,7 +123,6 @@ void simulate(EventList * events, Scheduler * scheduler, vector<IO *> * allIOs, 
 				callScheduler = false;
 				if(curRunningIO == nullptr){
 					curRunningIO = scheduler->getNextIO(curTrack);
-					// cout<< scheduler->runQueue->numIOs <<endl;
 					if(curRunningIO){
 						events->putEvent(curTime, curRunningIO, ISSUE);
 					} //may need else if for one of the schedulers
@@ -170,7 +169,7 @@ int main(int argc, char **argv){
 			else if(optarg[0] == 'j'){ scheduler = new SSTF_Scheduler(); }
 			else if(optarg[0] == 's'){ scheduler = new Scan_Scheduler(); }
 			else if(optarg[0] == 'c'){ scheduler = new cScan_Scheduler(); }
-			// else if(optarg[0] == 'f'){ scheduler = new fScan_Scheduler(); }
+			else if(optarg[0] == 'f'){ scheduler = new fScan_Scheduler(); }
 		} 
 		else if (opt == 'v') {
 			verbose = true;
