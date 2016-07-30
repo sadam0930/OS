@@ -83,7 +83,7 @@ class SSTF_Scheduler : public Scheduler {
 			} else {
 				int diff, idx;
 				int min = 9999;
-				for(int i=0; i < runQueue->size(); i++){
+				for(int i=0; i < (int) runQueue->size(); i++){
 					diff = abs(runQueue->at(i)->trackNum - curTrack);
 					if(diff < min){
 						min = diff;
@@ -107,7 +107,7 @@ class Scan_Scheduler : public Scheduler {
 		void putIO(IO * io){
 			int put_idx = runQueue->size();
 
-			for(int i = 0; i < runQueue->size(); i++){
+			for(int i = 0; i < (int) runQueue->size(); i++){
 				if(runQueue->at(i)->trackNum > io->trackNum){
 					put_idx = i;
 					break;
@@ -135,7 +135,7 @@ class Scan_Scheduler : public Scheduler {
 			int rm_idx = -1;
 
 				if(direction == UP && !runUpAlready){
-					for(int i = 0; i < runQueue->size(); i++){
+					for(int i = 0; i < (int) runQueue->size(); i++){
 						if(runQueue->at(i)->trackNum < curTrack){
 							//we are past these
 							continue;
@@ -187,7 +187,7 @@ class cScan_Scheduler : public Scheduler {
 		void putIO(IO * io){
 			int put_idx = runQueue->size();
 
-			for(int i = 0; i < runQueue->size(); i++){
+			for(int i = 0; i < (int) runQueue->size(); i++){
 				if(runQueue->at(i)->trackNum > io->trackNum){
 					put_idx = i;
 					break;
@@ -205,7 +205,7 @@ class cScan_Scheduler : public Scheduler {
 			} else {
 				int rm_idx = 0;
 
-				for(int i = 0; i < runQueue->size(); i++){
+				for(int i = 0; i < (int) runQueue->size(); i++){
 					if(runQueue->at(i)->trackNum < curTrack){
 						//we are past these
 						continue;
@@ -232,7 +232,7 @@ class fScan_Scheduler : public Scheduler {
 		void putIO(IO * io){
 			int put_idx = otherRunQueue->size();
 
-			for(int i = 0; i < otherRunQueue->size(); i++){
+			for(int i = 0; i < (int) otherRunQueue->size(); i++){
 				if(otherRunQueue->at(i)->trackNum > io->trackNum){
 					put_idx = i;
 					break;
@@ -267,7 +267,7 @@ class fScan_Scheduler : public Scheduler {
 			int rm_idx = -1;
 			
 			if(direction == UP && !runUpAlready){
-				for(int i = 0; i < runQueue->size(); i++){
+				for(int i = 0; i < (int) runQueue->size(); i++){
 					if(runQueue->at(i)->trackNum < curTrack){
 						//we are past these
 						continue;
